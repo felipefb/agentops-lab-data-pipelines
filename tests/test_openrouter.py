@@ -63,3 +63,19 @@ def test_missing_key_fails_closed(monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     with pytest.raises(RuntimeError):
         OpenRouterReasoner("openai/gpt-6.1-sol")
+
+
+def test_retries_connection_drop(monkeypatch):
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    r = OpenRouterReasoner("openai/gpt-6.1-sol")
+    calls = []
+
+    def handler(req):
+        calls.append(1)
+        if len(calls) == 1:
+            raise httpx.RemoteProtocolError("Server disconnected without sending a response.")
+        return ok()
+    r.http = httpx.Client(transport=httpx.MockTransport(handler))
+    r.decide({})
+    assert len(calls) == 2

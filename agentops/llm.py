@@ -149,8 +149,14 @@ class OpenRouterReasoner:
                                     "json_schema": {"name": "agent_decision", "strict": True, "schema": self.schema}},
                 "provider": {"require_parameters": True}, "usage": {"include": True}}
         last = None
+        import httpx
         for attempt in range(3):
-            r = self.http.post(self.URL, json=body)
+            try:
+                r = self.http.post(self.URL, json=body)
+            except (httpx.RemoteProtocolError, httpx.ConnectError, httpx.ReadTimeout) as e:
+                last = type(e).__name__  # connection drops are transient: retry (added after holdout-or-*-v1 runs)
+                time.sleep(2 * (attempt + 1))
+                continue
             if r.status_code in (429, 500, 502, 503, 504):
                 last = f"HTTP {r.status_code}"
                 time.sleep(2 * (attempt + 1))

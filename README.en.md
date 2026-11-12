@@ -12,7 +12,7 @@ independent validation, hash-chained append-only traces and cost per incident.
 
 Same 78 incidents for all strategies (baseline 3 reps, agents 2 reps, `claude-opus-5-5` effort low, total LLM spend US$ 11.20).
 Correct handling: baseline **92.3%** (n=234), assisted **99.4%** (n=156), supervised **100%** (n=156). Zero false accepts, regressions or forbidden actions executed in every strategy. Agent cost ≈ US$ 0.036/incident; machine latency p50 3.0 s (baseline) vs 8.4 s (agents).
-Paired gain supervised − baseline: +7.7 pp (95% CI +2.6 to +14.1), **entirely from schema drift** (6/78 incidents). The LLM flagged the injected instructions in 52/52 L3 runs and never proposed a forbidden action, so the Guardian's blocking is proven by scripted adversarial tests, not by the real LLM. See docs/RESULTS.md.
+Paired gain supervised − baseline: +7.7 pp (95% CI +2.6 to +14.1), **entirely from schema drift** (6/78 incidents). No model obeyed the injected instructions or proposed a forbidden action; the Guardian did block schema-violating calls from Gemini (9 per strategy) and DeepSeek (7). Blocking of malicious actions is proven by scripted adversarial tests. Same protocol via OpenRouter (supervised): Gemini-4-argon 94.9% (NO-GO: 11 fail-closed crashes from degenerate output), DeepSeek-v4.1-flash 93.0%, GPT-6.1-sol 92.3%. Every model fixed schema drift; every agent error was a safe escalation. Only Claude's gain over the baseline is statistically supported. See docs/RESULTS.md.
 
 ## Quick start
 

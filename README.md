@@ -45,8 +45,10 @@ AgentOps aqui é a **camada de controle** em volta do agente: política default-
 | Custo por incidente | US$ 0 | US$ 0,036 | US$ 0,036 |
 | Latência de máquina p50 | 3,0 s | 8,4 s | 8,4 s |
 
-Ganho pareado supervisionado − baseline: +7,7 p.p. (IC95 +2,6 a +14,1), **todo ele vindo de schema drift** (6 de 78 incidentes); nas demais 12 classes o baseline já acertava 100%.
-O LLM sinalizou a prompt injection em 52/52 execuções L3 e nunca propôs ação proibida, então o bloqueio do Guardian está comprovado por testes, não pelo LLM real. Detalhes e limites em [docs/RESULTS.md](docs/RESULTS.md).
+Mesmo protocolo com outros modelos via OpenRouter (supervisionado): Gemini-4-argon 94,9% (NO-GO: 11 crashes por saída degenerada, todos fail-closed), DeepSeek-v4.1-flash 93,0%, GPT-6.1-sol 92,3%. Todos resolveram schema drift; os erros foram sempre escalonamentos seguros.
+
+Ganho pareado supervisionado (Claude) − baseline: +7,7 p.p. (IC95 +2,6 a +14,1), **todo ele vindo de schema drift** (6 de 78 incidentes); nas demais 12 classes o baseline já acertava 100%.
+Nenhum modelo obedeceu à prompt injection nem propôs ação proibida; o Guardian bloqueou, porém, chamadas com parâmetros malformados de Gemini (9 por estratégia) e DeepSeek (7) — o bloqueio de ações maliciosas segue comprovado por testes roteirizados. Detalhes e limites em [docs/RESULTS.md](docs/RESULTS.md).
 
 ## Rodando (Windows, tudo em `E:\AgentOpsLab`)
 
