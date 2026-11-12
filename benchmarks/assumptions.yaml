@@ -1,0 +1,9 @@
+# ESTIMATED human-time hypotheses (NOT measurements). Used only for the "estimated end-to-end MTTR" view and the
+# value calculator. All values are editable; results are always shown with the ILUSTRATIVO/ESTIMADO badge.
+version: "2026-11-12"
+approval_review_min: 5          # steward reads plan, diff, risk, rollback and approves/declines
+escalation_resolution_min: 45   # on-call engineer picks up an escalated incident and fixes it manually
+alert_ack_min: 3                # time for a human to acknowledge an alert before any action (baseline + agents)
+engineer_cost_usd_per_hour: 60
+downtime_cost_usd_per_hour: 500 # cost of a broken finance/BI pipeline per hour (business assumption)
+incidents_per_month: 40

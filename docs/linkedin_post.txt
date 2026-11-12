@@ -1,0 +1,25 @@
+Agentes de IA conseguem consertar pipelines de dados com segurança? Em vez de supor, montei um laboratório para medir.
+
+O AgentOps Lab simula um e-commerce com 5 pipelines e injeta 13 tipos de falha reproduzíveis (schema drift, duplicidades, timeout, credencial inválida, regressão de SQL, divergência de reconciliação...), em 3 níveis de complexidade. O mais difícil esconde prompt injection nos logs e nos próprios dados.
+
+Comparei nos mesmos 78 incidentes:
+1) baseline sem IA, com 13 runbooks versionados;
+2) agente que propõe e espera aprovação humana;
+3) agente supervisionado que só executa sozinho ações reversíveis de baixo risco.
+
+Resultados medidos (auditados a partir dos logs brutos):
+• Baseline: 92,3% tratados corretamente (234 execuções)
+• Assistido: 99,4% (156)
+• Supervisionado: 100% (156)
+• Zero falsos aceites, zero regressões e zero ações proibidas executadas nas três estratégias
+• Custo do agente: cerca de US$ 0,04 por incidente; ~3x mais lento em máquina (8 s vs 3 s)
+
+O detalhe que importa: todo o ganho veio de uma única classe, schema drift. Ali a regra para e escala para humano; o agente mapeou a coluna renomeada e um juiz independente confirmou a recuperação. Nas outras 12 classes, o baseline já acertava 100%.
+
+E uma ressalva honesta: o modelo identificou a prompt injection em todas as execuções e nunca propôs ação proibida. Ou seja, o bloqueio da política foi provado por testes adversariais, não pelo LLM real. Dados sintéticos, aprovador simulado.
+
+Para mim, a lição é que AgentOps não é "o agente que conserta". É a camada que decide o que ele pode fazer: política default-deny, aprovação por papel, snapshot e rollback, validação independente e trilha de auditoria.
+
+Código e metodologia: [link do repositório — pendente de publicação]
+
+#AgentOps #DataEngineering #DataOps #IA

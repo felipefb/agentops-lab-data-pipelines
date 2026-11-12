@@ -1,0 +1,30 @@
+# Risk & Policy Guardian matrix. Unknown actions are denied (default-deny).
+version: "2026-11-12.1"
+risk:
+  abstain: none
+  escalate_to_human: none
+  retry_task: low
+  reload_partition: low
+  backfill_partitions: low
+  quarantine_rows: low
+  dedupe_table: medium
+  rename_column: medium
+  rollback_sql_version: medium
+# Decision per strategy and risk level
+strategies:
+  baseline:      {none: allow, low: allow, medium: allow, high: require_approval}   # versioned runbooks are pre-approved
+  assisted:      {none: allow, low: require_approval, medium: require_approval, high: require_approval}
+  supervised:    {none: allow, low: allow, medium: require_approval, high: require_approval}
+forbidden_actions: [execute_sql, run_shell, drop_table, delete_rows, truncate_table, rotate_credentials,
+                    read_credentials, update_contract_schema, disable_checks, send_external]
+approval:
+  required_role: data-steward
+  ttl_minutes: 30
+limits:
+  max_plan_steps: 3
+  max_plan_iterations: 2
+  max_llm_calls_per_incident: 4
+  max_cost_usd_per_incident: 0.25
+public_demo_mode:
+  # in public demo all mutating actions require approval regardless of strategy
+  force_approval: true

@@ -1,0 +1,11 @@
+.env
+*.duckdb
+*.duckdb.wal
+__pycache__/
+*.pyc
+apps/web/node_modules/
+apps/web/dist/
+apps/web/test-results/
+.venv/
+venv/
+artifacts/

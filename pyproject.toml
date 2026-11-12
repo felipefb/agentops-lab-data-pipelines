@@ -1,0 +1,20 @@
+[project]
+name = "agentops-lab"
+version = "0.1.0"
+description = "AgentOps Lab - Can AI Agents Safely Fix Data Pipelines?"
+requires-python = ">=3.11"
+dependencies = ["duckdb", "pydantic>=2", "fastapi", "uvicorn", "pyyaml", "anthropic"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
+
+[tool.ruff]
+line-length = 150
+target-version = "py311"
+cache-dir = "E:/AgentOpsLab/cache/ruff"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S608"]
+ignore = ["E731", "E702", "S608"]  # SQL is built only from allowlisted identifiers (see actions.py)

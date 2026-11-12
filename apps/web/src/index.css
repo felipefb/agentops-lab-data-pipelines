@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-ink: #0b1d3a;        /* deep blue */
+  --color-ink-2: #12305f;
+  --color-teal: #14b8a6;       /* turquoise */
+  --color-teal-d: #0f766e;
+  --color-amber: #f59e0b;
+  --color-amber-d: #b45309;
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+}
+html { scroll-behavior: smooth; }
+body { @apply bg-slate-50 text-slate-900 dark:bg-[#071327] dark:text-slate-100 font-sans antialiased; }
+:focus-visible { outline: 3px solid var(--color-amber); outline-offset: 2px; border-radius: 6px; }
+@utility card { @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700/60 dark:bg-[#0d2142]; }
+@utility btn { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed; }
+@utility btn-primary { @apply btn bg-teal-d text-white hover:bg-teal-700 dark:bg-teal dark:text-ink dark:hover:bg-teal-300; }
+@utility btn-ghost { @apply btn border border-slate-300 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800; }
+.fade-in { animation: fade .35s ease-out both; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: none } }
+.pulse-dot { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .35 } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+.reduce-motion *, .reduce-motion *::before { animation: none !important; transition: none !important; }
