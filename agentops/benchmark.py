@@ -21,7 +21,7 @@ from pathlib import Path
 
 from .config import ROOT, RUNS
 from .judge import judge
-from .llm import PRICE_DATE, PRICES, SYSTEM, ClaudeReasoner, llm_available
+from .llm import PRICE_DATE, PRICE_DATE_OR, PRICES, PRICES_OR, SYSTEM, llm_available, make_reasoner
 from .orchestrator import IncidentRun
 from .simulator import build_suite
 
@@ -74,6 +74,7 @@ def main(argv=None):
     ap.add_argument("--baseline-reps", type=int, default=3)
     ap.add_argument("--agent-reps", type=int, default=1)
     ap.add_argument("--strategies", nargs="+", default=["baseline", "assisted", "supervised"])
+    ap.add_argument("--provider", choices=["anthropic", "openrouter"], default="anthropic")
     ap.add_argument("--model", default="claude-opus-5-5")
     ap.add_argument("--effort", default="low")
     ap.add_argument("--max-cost", type=float, default=20.0, help="hard USD cap for the whole run")
@@ -89,8 +90,8 @@ def main(argv=None):
     (rd / "environment.json").write_text(json.dumps(environment(), indent=2), encoding="utf-8")
 
     strategies = [s for s in a.strategies if s == "baseline" or not a.no_llm]
-    if any(s != "baseline" for s in strategies) and not llm_available():
-        print("BLOCKED: agent strategies need an LLM credential; running baseline only")
+    if any(s != "baseline" for s in strategies) and not llm_available(a.provider):
+        print(f"BLOCKED: agent strategies need a {a.provider} credential; running baseline only")
         strategies = ["baseline"]
 
     t0 = time.time()
@@ -100,8 +101,10 @@ def main(argv=None):
                                           "seed": i.seed, "initial_sha": sha(i.sandbox / "initial.duckdb")} for i in incidents])
     code_hashes = {str(p.relative_to(REPO)): sha(p) for p in sorted((REPO / "agentops").glob("*.py"))}
     manifest = {"run_id": run_id, "seeds": a.seeds, "strategies": strategies, "baseline_reps": a.baseline_reps,
-                "agent_reps": a.agent_reps, "model": None if strategies == ["baseline"] else a.model, "effort": a.effort,
-                "prices_usd_per_mtok": PRICES.get(a.model), "price_date": PRICE_DATE, "max_cost_usd": a.max_cost,
+                "agent_reps": a.agent_reps, "model": None if strategies == ["baseline"] else a.model, "provider": a.provider,
+                "effort": a.effort if a.provider == "anthropic" else "provider default",
+                "prices_usd_per_mtok": (PRICES if a.provider == "anthropic" else PRICES_OR).get(a.model),
+                "price_date": PRICE_DATE if a.provider == "anthropic" else PRICE_DATE_OR, "max_cost_usd": a.max_cost,
                 "prompt_sha": hashlib.sha256(SYSTEM.encode()).hexdigest()[:16],
                 "policy_sha": sha(REPO / "policies" / "policy.yaml"), "code_sha": code_hashes,
                 "shuffle_seed": 20261112, "gold_dir": "gold/ (isolated; read only by judge)", "n_incidents": len(incidents)}
@@ -110,7 +113,7 @@ def main(argv=None):
     tasks = [(inc, s, r) for inc in incidents for s in strategies
              for r in range(a.baseline_reps if s == "baseline" else a.agent_reps)]
     random.Random(manifest["shuffle_seed"]).shuffle(tasks)
-    reasoner = None if strategies == ["baseline"] else ClaudeReasoner(a.model, a.effort)
+    reasoner = None if strategies == ["baseline"] else make_reasoner(a.provider, a.model, a.effort)
     spent = {"usd": 0.0, "skipped": 0}
 
     def one(task):
