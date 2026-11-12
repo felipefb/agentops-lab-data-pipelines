@@ -31,7 +31,7 @@ AgentOps aqui é a **camada de controle** em volta do agente: política default-
 | 6 Benchmark comparativo | **PASS** | run `holdout-agents-v1`, 546 execuções, auditoria PASS, US$ 11,20 |
 | 7 UX + E2E | **PASS** | 9 testes Playwright, 375/768/1440 px, axe WCAG 2.2 AA, screenshots reais |
 | 8 Relatório e valor | **PASS** | `docs/RESULTS.md`; calculadora com taxas medidas × premissas editáveis (ROI estimado) |
-| 9 Publicação | **BLOCKED** | sem autorização de push; repositório pronto para `git push` |
+| 9 Publicação | **PASS** | push autorizado; CI (python, web, secrets) verde no GitHub |
 
 
 ## Resultado medido (holdout, run `holdout-agents-v1`)

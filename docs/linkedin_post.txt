@@ -20,6 +20,6 @@ E uma ressalva honesta: o modelo identificou a prompt injection em todas as exec
 
 Para mim, a lição é que AgentOps não é "o agente que conserta". É a camada que decide o que ele pode fazer: política default-deny, aprovação por papel, snapshot e rollback, validação independente e trilha de auditoria.
 
-Código e metodologia: [link do repositório — pendente de publicação]
+Código e metodologia: https://github.com/felipefb/agentops-lab-data-pipelines
 
 #AgentOps #DataEngineering #DataOps #IA
